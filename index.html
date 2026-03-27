@@ -8,454 +8,222 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg:       #0f0f0f;
-    --surface:  #161616;
-    --surface2: #1e1e1e;
-    --surface3: #252525;
-    --border:   rgba(255,255,255,0.07);
-    --border-hi:rgba(255,255,255,0.14);
-    --text:     #f0ede8;
-    --muted:    #888580;
-    --subtle:   #4a4845;
-    --gold:     #c8a95a;
-    --gold-dim: rgba(200,169,90,0.13);
-    --gold-border: rgba(200,169,90,0.28);
-    --green:    #4a9d6f;
-    --green-dim:rgba(74,157,111,0.12);
-    --red:      #c45a5a;
-    --red-dim:  rgba(196,90,90,0.10);
-    --blue:     #5a8fc4;
-    --blue-dim: rgba(90,143,196,0.12);
-    --amber:    #c48d3a;
-    --amber-dim:rgba(196,141,58,0.12);
-    --mono: 'DM Mono', monospace;
-    --serif: 'Playfair Display', serif;
-    --sans: 'DM Sans', sans-serif;
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --bg:#f5f6f8; --surface:#ffffff; --surface2:#f0f2f5; --surface3:#e8eaed;
+    --border:rgba(0,0,0,0.08); --border-hi:rgba(0,0,0,0.14);
+    --text:#1a1a1a; --muted:#6b7280; --subtle:#9ca3af;
+    --blue:#1e6be6; --blue-dim:rgba(30,107,230,0.08); --blue-border:rgba(30,107,230,0.25);
+    --yellow:#c9920a; --yellow-dim:rgba(201,146,10,0.09); --yellow-border:rgba(201,146,10,0.28);
+    --red:#dc2626; --red-dim:rgba(220,38,38,0.07); --red-border:rgba(220,38,38,0.22);
+    --green:#16a34a; --green-dim:rgba(22,163,74,0.08); --green-border:rgba(22,163,74,0.25);
+    --mono:'DM Mono',monospace; --serif:'Playfair Display',serif; --sans:'DM Sans',sans-serif;
+    --radius-sm:4px; --radius-md:8px; --radius-lg:12px;
   }
-
-  html, body { height: 100%; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  /* ── Layout ── */
-  .app { display: flex; min-height: 100vh; }
-
-  .sidebar {
-    width: 220px; min-width: 220px; background: var(--surface);
-    border-right: 0.5px solid var(--border);
-    display: flex; flex-direction: column;
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
-  }
-
-  .logo {
-    padding: 24px 20px 22px;
-    border-bottom: 0.5px solid var(--border);
-    font-family: var(--serif); font-size: 18px; color: var(--text);
-    letter-spacing: 0.01em; flex-shrink: 0;
-  }
-  .logo span { color: var(--gold); }
-  .logo-sub { font-family: var(--sans); font-size: 10px; color: var(--subtle); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
-
-  nav { padding: 14px 0; flex: 1; overflow-y: auto; }
-
-  .nav-section { padding: 8px 20px 4px; font-size: 9px; color: var(--subtle); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 10px; padding: 9px 20px;
-    font-size: 12px; color: var(--muted); cursor: pointer;
-    border-left: 2px solid transparent; transition: all 0.12s;
-    text-decoration: none; font-weight: 400;
-  }
-  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .nav-item.active { color: var(--text); border-left-color: var(--gold); background: var(--gold-dim); }
-  .nav-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.45; flex-shrink: 0; }
-  .nav-item.active .nav-dot { background: var(--gold); opacity: 1; }
-
-  .sidebar-footer {
-    padding: 14px 20px; border-top: 0.5px solid var(--border);
-    font-size: 10px; color: var(--subtle); letter-spacing: 0.05em;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .api-indicator { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--subtle); }
-  .api-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); transition: background 0.3s; }
-  .api-dot.online { background: var(--green); }
-
-  .main { flex: 1; margin-left: 220px; display: flex; flex-direction: column; min-height: 100vh; }
-
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 32px; border-bottom: 0.5px solid var(--border);
-    background: var(--surface); position: sticky; top: 0; z-index: 5;
-    flex-shrink: 0;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 12px; }
-  .breadcrumb { font-size: 11px; color: var(--subtle); }
-  .breadcrumb-sep { color: var(--subtle); margin: 0 6px; }
-  .breadcrumb-curr { color: var(--text); font-weight: 500; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-
-  .badge {
-    font-size: 10px; padding: 3px 9px; border-radius: var(--radius-sm);
-    letter-spacing: 0.04em; font-weight: 500; font-family: var(--mono);
-  }
-  .badge-gold { background: var(--gold-dim); color: var(--gold); border: 0.5px solid var(--gold-border); }
-  .badge-green { background: var(--green-dim); color: var(--green); border: 0.5px solid rgba(74,157,111,0.25); }
-  .badge-blue { background: var(--blue-dim); color: var(--blue); border: 0.5px solid rgba(90,143,196,0.25); }
-
-  .content { padding: 32px; flex: 1; max-width: 920px; }
-
-  /* ── Client bar ── */
-  .client-bar {
-    display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
-    padding: 14px 18px; background: var(--surface);
-    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-  }
-  .client-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--blue-dim); border: 0.5px solid rgba(90,143,196,0.3);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500; color: var(--blue); flex-shrink: 0;
-  }
-  .client-name { font-size: 14px; font-weight: 500; }
-  .client-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .client-change { margin-left: auto; }
-  select.client-select {
-    background: var(--surface2); border: 0.5px solid var(--border-hi); color: var(--text);
-    font-size: 12px; padding: 6px 10px; border-radius: var(--radius-md);
-    font-family: var(--sans); cursor: pointer; outline: none;
-  }
-  select.client-select:focus { border-color: var(--gold); }
-
-  /* ── Method toggle ── */
-  .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
-
-  .method-card {
-    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-    padding: 18px 20px; cursor: pointer; transition: all 0.15s;
-    background: var(--surface);
-  }
-  .method-card:hover { border-color: var(--border-hi); background: var(--surface2); }
-  .method-card.active { border: 1.5px solid var(--gold); background: var(--gold-dim); }
-
-  .method-icon {
-    width: 34px; height: 34px; border-radius: var(--radius-md);
-    background: var(--surface2); display: flex; align-items: center;
-    justify-content: center; margin-bottom: 12px;
-  }
-  .method-card.active .method-icon { background: rgba(200,169,90,0.15); }
-  .method-icon svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.5; }
-  .method-card.active .method-icon svg { stroke: var(--gold); }
-  .method-label { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-  .method-desc { font-size: 11px; color: var(--muted); line-height: 1.55; }
-  .method-card.active .method-desc { color: rgba(200,169,90,0.8); }
-
-  /* ── Form ── */
-  .form-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
-  .form-section-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 18px; border-bottom: 0.5px solid var(--border);
-    background: var(--surface2);
-  }
-  .form-section-title { font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
-  .form-section-body { padding: 18px; }
-
-  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field-label { font-size: 10px; color: var(--subtle); font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; }
-
-  input[type=text], input[type=date], select, input[type=number] {
-    background: var(--surface2); border: 0.5px solid var(--border-hi);
-    color: var(--text); font-size: 13px; padding: 8px 11px;
-    border-radius: var(--radius-md); font-family: var(--sans);
-    outline: none; width: 100%; transition: border-color 0.12s;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus { border-color: var(--gold); }
-  input::placeholder { color: var(--subtle); }
-  select option { background: var(--surface2); }
-
-  /* ── Upload zone ── */
-  .upload-zone {
-    border: 1px dashed var(--border-hi); border-radius: var(--radius-lg);
-    padding: 36px 24px; text-align: center; cursor: pointer;
-    transition: all 0.15s; margin-bottom: 0;
-  }
-  .upload-zone:hover { background: var(--surface2); border-color: var(--muted); }
-  .upload-zone.drag-over { background: var(--gold-dim); border-color: var(--gold); }
-  .upload-icon { margin: 0 auto 14px; }
-  .upload-icon svg { width: 38px; height: 38px; stroke: var(--subtle); fill: none; stroke-width: 1.2; }
-  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: 5px; }
-  .upload-sub { font-size: 11px; color: var(--subtle); }
-  .upload-sub span { color: var(--gold); cursor: pointer; }
-  .upload-sub span:hover { text-decoration: underline; }
-
-  .file-queued {
-    display: flex; align-items: center; gap: 12px;
-    border: 0.5px solid rgba(74,157,111,0.3); background: var(--green-dim);
-    border-radius: var(--radius-md); padding: 11px 14px;
-  }
-  .file-queued svg { stroke: var(--green); flex-shrink: 0; }
-  .file-name { font-size: 12px; font-weight: 500; color: var(--green); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .file-size { font-size: 11px; color: var(--green); opacity: 0.7; flex-shrink: 0; }
-  .file-remove { font-size: 11px; color: var(--muted); cursor: pointer; padding: 2px 6px; flex-shrink: 0; }
-  .file-remove:hover { color: var(--red); }
-
-  .supported-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-  .tag {
-    font-size: 10px; padding: 3px 9px; border-radius: 20px;
-    border: 0.5px solid var(--border-hi); color: var(--subtle);
-    letter-spacing: 0.02em;
-  }
-
-  /* ── Holdings table ── */
-  .col-headers {
-    display: grid;
-    grid-template-columns: 2.4fr 1fr 1fr 1fr 32px;
-    gap: 8px; padding: 0 18px 6px;
-  }
-  .col-h { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--subtle); font-weight: 500; }
-
-  .holding-rows { padding: 0 18px; }
-
-  .holding-wrap { margin-bottom: 8px; }
-  .holding-row {
-    display: grid;
-    grid-template-columns: 2.4fr 1fr 1fr 1fr 32px;
-    gap: 8px; align-items: start;
-  }
-
-  /* ── Search dropdown ── */
-  .search-wrap { position: relative; }
-
-  .search-dropdown {
-    position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 200;
-    background: var(--surface2); border: 0.5px solid var(--border-hi);
-    border-radius: var(--radius-lg); max-height: 260px; overflow-y: auto;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  }
-  .search-dropdown.hidden { display: none; }
-  .dd-section { font-size: 9px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--subtle); padding: 9px 12px 4px; font-weight: 500; }
-  .dd-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; cursor: pointer; gap: 10px; transition: background 0.1s; }
-  .dd-item:hover { background: var(--surface3); }
-  .dd-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-  .dd-name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dd-sub { font-size: 10px; color: var(--muted); font-family: var(--mono); }
-  .dd-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
-  .dd-price { font-size: 11px; font-family: var(--mono); color: var(--text); }
-  .dd-type { font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; }
-  .t-ut   { background: var(--blue-dim);  color: var(--blue); }
-  .t-etf  { background: var(--green-dim); color: var(--green); }
-  .t-reit { background: var(--gold-dim);  color: var(--gold); }
-  .t-eq   { background: var(--surface3);  color: var(--muted); }
-  .t-us   { background: rgba(196,90,90,0.1); color: var(--red); }
-  .dd-empty { padding: 14px 12px; font-size: 12px; color: var(--subtle); text-align: center; }
-
-  /* ── Number inputs ── */
-  .num-input { font-family: var(--mono); font-size: 12px; }
-
-  .price-wrap { position: relative; }
-  .live-badge {
-    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
-    font-size: 8px; color: var(--green); font-weight: 500; letter-spacing: 0.05em;
-    pointer-events: none; opacity: 0; transition: opacity 0.3s;
-  }
-  .live-badge.show { opacity: 1; }
-  .loading-badge {
-    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
-    font-size: 10px; color: var(--subtle); pointer-events: none;
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .loading-badge.show { opacity: 1; }
-
-  .remove-btn {
-    width: 32px; height: 36px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border-radius: var(--radius-md); border: 0.5px solid var(--border);
-    background: none; color: var(--subtle); font-size: 16px; flex-shrink: 0;
-    transition: all 0.12s;
-  }
-  .remove-btn:hover { background: var(--red-dim); color: var(--red); border-color: rgba(196,90,90,0.3); }
-
-  .row-meta { display: flex; align-items: center; gap: 8px; padding: 4px 0 0; min-height: 18px; flex-wrap: wrap; }
-  .row-meta-txt { font-size: 10px; color: var(--subtle); }
-  .row-gain { font-size: 10px; font-family: var(--mono); }
-  .gain-pos { color: var(--green); }
-  .gain-neg { color: var(--red); }
-
-  .add-btn {
-    display: flex; align-items: center; gap: 6px; padding: 10px 18px;
-    font-size: 12px; color: var(--gold); cursor: pointer; border: none;
-    background: none; font-family: var(--sans); transition: opacity 0.12s;
-    border-top: 0.5px solid var(--border);
-  }
-  .add-btn:hover { opacity: 0.75; }
-
-  /* ── Totals ── */
-  .totals-bar {
-    display: flex; gap: 0; background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px;
-  }
-  .total-item { flex: 1; padding: 14px 18px; border-right: 0.5px solid var(--border); }
-  .total-item:last-child { border-right: none; }
-  .total-val { font-size: 16px; font-weight: 500; font-family: var(--mono); color: var(--text); }
-  .total-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--subtle); margin-top: 3px; }
-
-  /* ── Actions ── */
-  .action-row { display: flex; justify-content: flex-end; gap: 10px; }
-  .btn {
-    font-size: 13px; padding: 9px 20px; border-radius: var(--radius-md);
-    cursor: pointer; font-family: var(--sans); font-weight: 400;
-    transition: all 0.12s; border: 0.5px solid var(--border-hi);
-    background: none; color: var(--muted);
-  }
-  .btn:hover { background: var(--surface2); color: var(--text); }
-  .btn-primary {
-    background: var(--gold); color: #0f0f0f; border-color: var(--gold);
-    font-weight: 500;
-  }
-  .btn-primary:hover { background: #d4b468; border-color: #d4b468; }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ── Processing ── */
-  .processing-view { text-align: center; padding: 60px 24px; }
-  .spinner {
-    width: 32px; height: 32px; border: 1.5px solid var(--border-hi);
-    border-top-color: var(--gold); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 0 auto 18px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .proc-label { font-size: 14px; color: var(--text); margin-bottom: 5px; }
-  .proc-sub { font-size: 11px; color: var(--subtle); }
-
-  /* ── Review ── */
-  .review-banner {
-    display: flex; gap: 0; background: var(--surface); border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px;
-  }
-  .review-stat { flex: 1; padding: 14px 18px; border-right: 0.5px solid var(--border); }
-  .review-stat:last-child { border-right: none; }
-  .rs-val { font-size: 16px; font-weight: 500; font-family: var(--mono); }
-  .rs-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--subtle); margin-top: 3px; }
-
-  .review-table-wrap { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
-  .review-table-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 0.5px solid var(--border); background: var(--surface2); }
-  .rth-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
-  .conf-badge { font-size: 9px; padding: 3px 8px; border-radius: 10px; font-weight: 500; letter-spacing: 0.04em; }
-  .conf-high { background: var(--green-dim); color: var(--green); }
-  .conf-manual { background: var(--amber-dim); color: var(--amber); }
-
-  table.review { width: 100%; border-collapse: collapse; }
-  table.review th { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--subtle); padding: 9px 18px; text-align: left; font-weight: 500; border-bottom: 0.5px solid var(--border); }
-  table.review th.r { text-align: right; }
-  table.review td { padding: 10px 18px; font-size: 12px; border-bottom: 0.5px solid var(--border); }
-  table.review td.r { text-align: right; font-family: var(--mono); font-size: 11px; }
-  table.review tr:last-child td { border-bottom: none; }
-  table.review tr:hover td { background: var(--surface2); }
-  table.review td.muted { color: var(--muted); }
-  table.review td.pos { color: var(--green); }
-  table.review td.neg { color: var(--red); }
-  table.review td.warn { color: var(--amber); }
-
-  /* ── Success ── */
-  .success-view { text-align: center; padding: 60px 24px; }
-  .success-icon {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: var(--green-dim); border: 0.5px solid rgba(74,157,111,0.3);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 18px;
-  }
-  .success-icon svg { stroke: var(--green); width: 24px; height: 24px; fill: none; stroke-width: 2; }
-  .success-title { font-size: 18px; font-weight: 500; margin-bottom: 6px; }
-  .success-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
-  .success-actions { display: flex; gap: 10px; justify-content: center; }
-
-  /* ── Screens ── */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
-
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); }
-    .main { margin-left: 0; }
-    .content { padding: 20px; }
-    .col-headers, .holding-row { grid-template-columns: 1fr 80px 80px 80px 32px; }
-  }
-
-  /* ── Fade in ── */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .screen.active { animation: fadeUp 0.2s ease; }
+  html,body{height:100%;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;}
+  .app{display:flex;min-height:100vh;}
+  .sidebar{width:220px;min-width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;}
+  .logo{padding:22px 20px 20px;border-bottom:1px solid var(--border);font-family:var(--serif);font-size:20px;color:var(--text);flex-shrink:0;}
+  .logo span{color:var(--blue);}
+  .logo-sub{font-family:var(--sans);font-size:10px;color:var(--subtle);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;}
+  nav{padding:12px 0;flex:1;overflow-y:auto;}
+  .nav-section{padding:10px 20px 4px;font-size:9px;color:var(--subtle);letter-spacing:.1em;text-transform:uppercase;font-weight:500;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:12px;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .12s;text-decoration:none;}
+  .nav-item:hover{color:var(--text);background:var(--surface2);}
+  .nav-item.active{color:var(--blue);border-left-color:var(--blue);background:var(--blue-dim);font-weight:500;}
+  .nav-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4;flex-shrink:0;}
+  .nav-item.active .nav-dot{background:var(--blue);opacity:1;}
+  .sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--subtle);display:flex;align-items:center;justify-content:space-between;}
+  .api-indicator{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--subtle);}
+  .api-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);transition:background .3s;}
+  .api-dot.online{background:var(--green);}
+  .main{flex:1;margin-left:220px;display:flex;flex-direction:column;min-height:100vh;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:5;flex-shrink:0;}
+  .breadcrumb{font-size:12px;color:var(--subtle);}
+  .breadcrumb-sep{margin:0 6px;}
+  .breadcrumb-curr{color:var(--text);font-weight:500;}
+  .topbar-right{display:flex;align-items:center;gap:10px;}
+  .badge{font-size:10px;padding:3px 9px;border-radius:var(--radius-sm);letter-spacing:.04em;font-weight:500;font-family:var(--mono);}
+  .badge-yellow{background:var(--yellow-dim);color:var(--yellow);border:.5px solid var(--yellow-border);}
+  .badge-blue{background:var(--blue-dim);color:var(--blue);border:.5px solid var(--blue-border);}
+  .badge-red{background:var(--red-dim);color:var(--red);border:.5px solid var(--red-border);}
+  .content{padding:28px 32px;flex:1;max-width:940px;}
+  .client-bar{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+  .client-avatar{width:38px;height:38px;border-radius:50%;background:var(--blue-dim);border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--blue);flex-shrink:0;}
+  .client-name{font-size:14px;font-weight:500;}
+  .client-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+  .client-change{margin-left:auto;}
+  select.client-select{background:var(--surface2);border:1px solid var(--border-hi);color:var(--text);font-size:12px;padding:6px 10px;border-radius:var(--radius-md);font-family:var(--sans);cursor:pointer;outline:none;}
+  select.client-select:focus{border-color:var(--blue);}
+  .method-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  .method-card{border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;cursor:pointer;transition:all .15s;background:var(--surface);}
+  .method-card:hover{border-color:var(--blue-border);background:var(--blue-dim);}
+  .method-card.active{border:2px solid var(--blue);background:var(--blue-dim);}
+  .method-icon{width:34px;height:34px;border-radius:var(--radius-md);background:var(--surface2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+  .method-card.active .method-icon{background:#fff;border:1px solid var(--blue-border);}
+  .method-icon svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:1.5;}
+  .method-card.active .method-icon svg{stroke:var(--blue);}
+  .method-label{font-size:13px;font-weight:500;margin-bottom:4px;}
+  .method-card.active .method-label{color:var(--blue);}
+  .method-desc{font-size:11px;color:var(--muted);line-height:1.55;}
+  .form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;}
+  .form-section-header{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--border);background:var(--surface2);}
+  .form-section-title{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+  .form-section-body{padding:18px;}
+  .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field-label{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+  input[type=text],input[type=date],select,input[type=number]{background:var(--surface);border:1px solid var(--border-hi);color:var(--text);font-size:13px;padding:8px 11px;border-radius:var(--radius-md);font-family:var(--sans);outline:none;width:100%;transition:border-color .12s;-webkit-appearance:none;}
+  input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);}
+  input::placeholder{color:var(--subtle);}
+  .upload-zone{border:2px dashed var(--border-hi);border-radius:var(--radius-lg);padding:36px 24px;text-align:center;cursor:pointer;transition:all .15s;}
+  .upload-zone:hover{background:var(--blue-dim);border-color:var(--blue);}
+  .upload-zone.drag-over{background:var(--blue-dim);border-color:var(--blue);}
+  .upload-icon{margin:0 auto 14px;}
+  .upload-icon svg{width:38px;height:38px;stroke:var(--subtle);fill:none;stroke-width:1.2;}
+  .upload-zone:hover .upload-icon svg,.upload-zone.drag-over .upload-icon svg{stroke:var(--blue);}
+  .upload-title{font-size:14px;font-weight:500;margin-bottom:5px;}
+  .upload-sub{font-size:11px;color:var(--subtle);}
+  .upload-sub span{color:var(--blue);cursor:pointer;text-decoration:underline;}
+  .file-queued{display:flex;align-items:center;gap:12px;border:1px solid var(--green-border);background:var(--green-dim);border-radius:var(--radius-md);padding:11px 14px;}
+  .file-queued svg{stroke:var(--green);flex-shrink:0;}
+  .file-name{font-size:12px;font-weight:500;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .file-size{font-size:11px;color:var(--green);opacity:.75;flex-shrink:0;}
+  .file-remove{font-size:11px;color:var(--muted);cursor:pointer;padding:2px 6px;flex-shrink:0;}
+  .file-remove:hover{color:var(--red);}
+  .supported-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border-hi);color:var(--muted);background:var(--surface2);}
+  .col-headers{display:grid;grid-template-columns:2.4fr 1fr 1fr 1fr 32px;gap:8px;padding:0 18px 6px;}
+  .col-h{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:500;}
+  .holding-rows{padding:0 18px;}
+  .holding-wrap{margin-bottom:8px;}
+  .holding-row{display:grid;grid-template-columns:2.4fr 1fr 1fr 1fr 32px;gap:8px;align-items:start;}
+  .search-wrap{position:relative;}
+  .search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:200;background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--radius-lg);max-height:260px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.10);}
+  .search-dropdown.hidden{display:none;}
+  .dd-section{font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:var(--subtle);padding:9px 12px 4px;font-weight:500;border-top:1px solid var(--border);}
+  .dd-section:first-child{border-top:none;}
+  .dd-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;gap:10px;transition:background .1s;}
+  .dd-item:hover{background:var(--surface2);}
+  .dd-left{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+  .dd-name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+  .dd-sub{font-size:10px;color:var(--muted);font-family:var(--mono);}
+  .dd-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+  .dd-price{font-size:11px;font-family:var(--mono);color:var(--text);}
+  .dd-type{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:500;letter-spacing:.04em;white-space:nowrap;}
+  .t-ut{background:var(--blue-dim);color:var(--blue);}
+  .t-etf{background:var(--green-dim);color:var(--green);}
+  .t-reit{background:var(--yellow-dim);color:var(--yellow);}
+  .t-eq{background:var(--surface2);color:var(--muted);}
+  .t-us{background:var(--red-dim);color:var(--red);}
+  .dd-empty{padding:14px 12px;font-size:12px;color:var(--subtle);text-align:center;}
+  .num-input{font-family:var(--mono);font-size:12px;}
+  .price-wrap{position:relative;}
+  .live-badge{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:8px;color:var(--green);font-weight:600;letter-spacing:.05em;pointer-events:none;opacity:0;transition:opacity .3s;}
+  .live-badge.show{opacity:1;}
+  .loading-badge{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--subtle);pointer-events:none;opacity:0;transition:opacity .3s;}
+  .loading-badge.show{opacity:1;}
+  .remove-btn{width:32px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:var(--radius-md);border:1px solid var(--border);background:none;color:var(--subtle);font-size:16px;flex-shrink:0;transition:all .12s;}
+  .remove-btn:hover{background:var(--red-dim);color:var(--red);border-color:var(--red-border);}
+  .row-meta{display:flex;align-items:center;gap:8px;padding:4px 0 0;min-height:18px;flex-wrap:wrap;}
+  .row-meta-txt{font-size:10px;color:var(--subtle);}
+  .row-gain{font-size:10px;font-family:var(--mono);}
+  .gain-pos{color:var(--green);}
+  .gain-neg{color:var(--red);}
+  .add-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;font-size:12px;color:var(--blue);cursor:pointer;border:none;background:none;font-family:var(--sans);transition:opacity .12s;border-top:1px solid var(--border);}
+  .add-btn:hover{opacity:.7;}
+  .totals-bar{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;}
+  .total-item{flex:1;padding:14px 18px;border-right:1px solid var(--border);}
+  .total-item:last-child{border-right:none;}
+  .total-val{font-size:16px;font-weight:500;font-family:var(--mono);color:var(--text);}
+  .total-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);margin-top:3px;}
+  .action-row{display:flex;justify-content:flex-end;gap:10px;}
+  .btn{font-size:13px;padding:9px 20px;border-radius:var(--radius-md);cursor:pointer;font-family:var(--sans);font-weight:400;transition:all .12s;border:1px solid var(--border-hi);background:none;color:var(--muted);}
+  .btn:hover{background:var(--surface2);color:var(--text);}
+  .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:500;}
+  .btn-primary:hover{background:#1558c7;border-color:#1558c7;}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+  .processing-view{text-align:center;padding:60px 24px;}
+  .spinner{width:32px;height:32px;border:2px solid var(--border-hi);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 18px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .proc-label{font-size:14px;color:var(--text);margin-bottom:5px;}
+  .proc-sub{font-size:11px;color:var(--subtle);}
+  .review-banner{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;}
+  .review-stat{flex:1;padding:14px 18px;border-right:1px solid var(--border);}
+  .review-stat:last-child{border-right:none;}
+  .rs-val{font-size:16px;font-weight:500;font-family:var(--mono);color:var(--text);}
+  .rs-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);margin-top:3px;}
+  .review-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;}
+  .review-table-header{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--border);background:var(--surface2);}
+  .rth-title{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:500;}
+  .conf-badge{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:500;letter-spacing:.04em;}
+  .conf-high{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
+  .conf-manual{background:var(--yellow-dim);color:var(--yellow);border:1px solid var(--yellow-border);}
+  table.review{width:100%;border-collapse:collapse;}
+  table.review th{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--subtle);padding:9px 18px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);background:var(--surface2);}
+  table.review th.r{text-align:right;}
+  table.review td{padding:10px 18px;font-size:12px;border-bottom:1px solid var(--border);color:var(--text);}
+  table.review td.r{text-align:right;font-family:var(--mono);font-size:11px;}
+  table.review tr:last-child td{border-bottom:none;}
+  table.review tr:hover td{background:var(--surface2);}
+  table.review td.muted{color:var(--muted);}
+  table.review td.pos{color:var(--green);}
+  table.review td.neg{color:var(--red);}
+  table.review td.warn{color:var(--yellow);}
+  table.review tr.flag-row td{background:rgba(201,146,10,0.04);}
+  .success-view{text-align:center;padding:60px 24px;}
+  .success-icon{width:52px;height:52px;border-radius:50%;background:var(--green-dim);border:1px solid var(--green-border);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+  .success-icon svg{stroke:var(--green);width:24px;height:24px;fill:none;stroke-width:2;}
+  .success-title{font-size:20px;font-weight:500;margin-bottom:6px;font-family:var(--serif);}
+  .success-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+  .success-actions{display:flex;gap:10px;justify-content:center;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .screen.active{animation:fadeUp .18s ease;}
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:4px;}
+  @media(max-width:768px){.sidebar{transform:translateX(-100%);}.main{margin-left:0;}.content{padding:20px;}.col-headers,.holding-row{grid-template-columns:1fr 80px 80px 80px 32px;}.method-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <div class="app">
-
-  <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="logo">
-      Folio<span>.</span>
-      <div class="logo-sub">IFA Portfolio Suite</div>
-    </div>
+    <div class="logo">Folio<span>.</span><div class="logo-sub">IFA Portfolio Suite</div></div>
     <nav>
       <div class="nav-section">Workspace</div>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Overview</a>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Clients</a>
       <a class="nav-item active" href="#"><div class="nav-dot"></div> Add Holdings</a>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Reports</a>
-      <div class="nav-section" style="margin-top:8px;">Data</div>
+      <div class="nav-section" style="margin-top:6px;">Data</div>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Fund Library</a>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Prices</a>
-      <div class="nav-section" style="margin-top:8px;">Account</div>
+      <div class="nav-section" style="margin-top:6px;">Account</div>
       <a class="nav-item" href="#"><div class="nav-dot"></div> Settings</a>
     </nav>
     <div class="sidebar-footer">
       <span>SGD · Singapore</span>
-      <div class="api-indicator">
-        <div class="api-dot" id="api-dot"></div>
-        <span id="api-txt">Checking...</span>
-      </div>
+      <div class="api-indicator"><div class="api-dot" id="api-dot"></div><span id="api-txt">Checking...</span></div>
     </div>
   </aside>
 
-  <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div class="topbar-left">
-        <div class="breadcrumb">
-          <span>Clients</span>
-          <span class="breadcrumb-sep">›</span>
-          <span>Sarah Tan Mei Ling</span>
-          <span class="breadcrumb-sep">›</span>
-          <span class="breadcrumb-curr">Add Holdings</span>
-        </div>
+      <div class="breadcrumb">
+        <span>Clients</span><span class="breadcrumb-sep">›</span>
+        <span>Sarah Tan Mei Ling</span><span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-curr">Add Holdings</span>
       </div>
       <div class="topbar-right">
-        <span class="badge badge-gold">Demo mode</span>
+        <span class="badge badge-yellow">Demo mode</span>
         <span class="badge badge-blue">6 clients</span>
       </div>
     </div>
 
     <div class="content">
-
-      <!-- Client bar -->
       <div class="client-bar">
         <div class="client-avatar">ST</div>
         <div>
@@ -464,128 +232,84 @@
         </div>
         <div class="client-change">
           <select class="client-select">
-            <option>Sarah Tan Mei Ling</option>
-            <option>David Lim Boon Keng</option>
-            <option>Priya Nair</option>
-            <option>Chen Wei Jie</option>
-            <option>Fatimah bte Hamid</option>
-            <option>James Rodrigues</option>
+            <option>Sarah Tan Mei Ling</option><option>David Lim Boon Keng</option>
+            <option>Priya Nair</option><option>Chen Wei Jie</option>
+            <option>Fatimah bte Hamid</option><option>James Rodrigues</option>
           </select>
         </div>
       </div>
 
-      <!-- SCREEN: Method select -->
+      <!-- SCREEN: Method -->
       <div id="screen-method" class="screen active">
-
         <div class="method-grid">
           <div class="method-card active" id="card-pdf" onclick="selectMethod('pdf')">
-            <div class="method-icon">
-              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
+            <div class="method-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div class="method-label">Upload statement</div>
             <div class="method-desc">Upload a PDF from any custodian or platform. AI will extract holdings automatically.</div>
           </div>
           <div class="method-card" id="card-manual" onclick="selectMethod('manual')">
-            <div class="method-icon">
-              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </div>
+            <div class="method-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             <div class="method-label">Manual entry</div>
             <div class="method-desc">Enter holdings directly with smart fund search and live price lookup.</div>
           </div>
         </div>
 
-        <!-- PDF flow -->
         <div id="pdf-flow">
           <div class="form-section">
-            <div class="form-section-header">
-              <span class="form-section-title">Upload statement</span>
-            </div>
+            <div class="form-section-header"><span class="form-section-title">Upload statement</span></div>
             <div class="form-section-body">
               <div id="upload-zone-wrap">
-                <div class="upload-zone" id="drop-zone"
-                  onclick="triggerUpload()"
-                  ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                <div class="upload-zone" id="drop-zone" onclick="triggerUpload()"
+                  ondragover="event.preventDefault();this.classList.add('drag-over')"
                   ondragleave="this.classList.remove('drag-over')"
                   ondrop="handleDrop(event)">
-                  <div class="upload-icon">
-                    <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-                  </div>
+                  <div class="upload-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
                   <div class="upload-title">Drop statement here</div>
-                  <div class="upload-sub">PDF up to 20 MB &nbsp;·&nbsp; <span onclick="event.stopPropagation(); triggerUpload()">browse files</span></div>
+                  <div class="upload-sub">PDF up to 20 MB &nbsp;·&nbsp; <span onclick="event.stopPropagation();triggerUpload()">browse files</span></div>
                 </div>
               </div>
               <input type="file" id="file-input" accept=".pdf" style="display:none" onchange="handleFileSelect(event)">
-
               <div class="supported-tags" style="margin-top:16px;">
-                <span class="tag">DBS Vickers</span>
-                <span class="tag">Phillip Securities</span>
-                <span class="tag">Interactive Brokers</span>
-                <span class="tag">FSM / iFAST</span>
-                <span class="tag">Navigator</span>
-                <span class="tag">CPF Annual</span>
-                <span class="tag">Prudential ILP</span>
-                <span class="tag">AIA · GE · Manulife</span>
-                <span class="tag">OCBC Securities</span>
-                <span class="tag">UOB Kay Hian</span>
+                <span class="tag">DBS Vickers</span><span class="tag">Phillip Securities</span>
+                <span class="tag">Interactive Brokers</span><span class="tag">FSM / iFAST</span>
+                <span class="tag">Navigator</span><span class="tag">CPF Annual</span>
+                <span class="tag">Prudential ILP</span><span class="tag">AIA · GE · Manulife</span>
+                <span class="tag">OCBC Securities</span><span class="tag">UOB Kay Hian</span>
               </div>
             </div>
           </div>
-
           <div class="action-row">
             <button class="btn" onclick="selectMethod('manual')">Switch to manual →</button>
             <button class="btn btn-primary" id="extract-btn" disabled onclick="startProcessing()">Extract holdings →</button>
           </div>
         </div>
 
-        <!-- Manual flow -->
         <div id="manual-flow" style="display:none;">
           <div class="form-section">
             <div class="form-section-header"><span class="form-section-title">Account details</span></div>
             <div class="form-section-body">
               <div class="form-grid-3" style="margin-bottom:14px;">
-                <div class="field">
-                  <div class="field-label">Institution</div>
+                <div class="field"><div class="field-label">Institution</div>
                   <select id="inst-sel">
                     <option value="">Select institution</option>
-                    <option>FSM / iFAST</option>
-                    <option>DBS Vickers</option>
-                    <option>Phillip Securities</option>
-                    <option>Interactive Brokers</option>
-                    <option>Navigator</option>
-                    <option>CPF — OA</option>
-                    <option>CPF — SA</option>
-                    <option>SRS</option>
-                    <option>Prudential</option>
-                    <option>AIA</option>
-                    <option>Great Eastern</option>
-                    <option>Manulife</option>
-                    <option>Other</option>
+                    <option>FSM / iFAST</option><option>DBS Vickers</option>
+                    <option>Phillip Securities</option><option>Interactive Brokers</option>
+                    <option>Navigator</option><option>CPF — OA</option><option>CPF — SA</option>
+                    <option>SRS</option><option>Prudential</option><option>AIA</option>
+                    <option>Great Eastern</option><option>Manulife</option><option>Other</option>
                   </select>
                 </div>
-                <div class="field">
-                  <div class="field-label">Account / policy no.</div>
-                  <input type="text" placeholder="e.g. FSM-0123456">
-                </div>
-                <div class="field">
-                  <div class="field-label">Statement date</div>
-                  <input type="date" id="stmt-date" value="2026-03-27">
-                </div>
+                <div class="field"><div class="field-label">Account / policy no.</div><input type="text" placeholder="e.g. FSM-0123456"></div>
+                <div class="field"><div class="field-label">Statement date</div><input type="date" id="stmt-date" value="2026-03-27"></div>
               </div>
               <div class="form-grid-2">
-                <div class="field">
-                  <div class="field-label">Base currency</div>
-                  <select id="base-ccy">
-                    <option>SGD</option><option>USD</option><option>HKD</option><option>EUR</option><option>GBP</option>
-                  </select>
+                <div class="field"><div class="field-label">Base currency</div>
+                  <select id="base-ccy"><option>SGD</option><option>USD</option><option>HKD</option><option>EUR</option><option>GBP</option></select>
                 </div>
-                <div class="field">
-                  <div class="field-label">Notes (optional)</div>
-                  <input type="text" placeholder="e.g. joint account with spouse">
-                </div>
+                <div class="field"><div class="field-label">Notes (optional)</div><input type="text" placeholder="e.g. joint account with spouse"></div>
               </div>
             </div>
           </div>
-
           <div class="form-section">
             <div class="form-section-header"><span class="form-section-title">Holdings</span></div>
             <div class="col-headers" style="margin-top:12px;">
@@ -601,21 +325,18 @@
               Add holding
             </button>
           </div>
-
-          <div class="totals-bar" id="totals-bar">
+          <div class="totals-bar">
             <div class="total-item"><div class="total-val" id="t-val">SGD 0.00</div><div class="total-lbl">Market value</div></div>
             <div class="total-item"><div class="total-val" id="t-cost">SGD 0.00</div><div class="total-lbl">Cost basis</div></div>
-            <div class="total-item"><div class="total-val" id="t-gain" style="color:var(--subtle);">—</div><div class="total-lbl">Unrealised P&L</div></div>
+            <div class="total-item"><div class="total-val" id="t-gain" style="color:var(--subtle);">—</div><div class="total-lbl">Unrealised P&amp;L</div></div>
             <div class="total-item"><div class="total-val" id="t-count">0</div><div class="total-lbl">Holdings</div></div>
           </div>
-
           <div class="action-row">
             <button class="btn" onclick="selectMethod('pdf')">Switch to upload</button>
-            <button class="btn btn-primary" onclick="showReviewManual()">Review & save →</button>
+            <button class="btn btn-primary" onclick="showReviewManual()">Review &amp; save →</button>
           </div>
         </div>
-
-      </div><!-- /screen-method -->
+      </div>
 
       <!-- SCREEN: Processing -->
       <div id="screen-processing" class="screen">
@@ -625,7 +346,7 @@
             <div class="processing-view">
               <div class="spinner"></div>
               <div class="proc-label" id="proc-label">Reading PDF structure...</div>
-              <div class="proc-sub" id="proc-sub">FSM portfolio statement · Mar 2026</div>
+              <div class="proc-sub">FSM portfolio statement · Mar 2026</div>
             </div>
           </div>
         </div>
@@ -636,481 +357,244 @@
         <div class="review-banner">
           <div class="review-stat"><div class="rs-val">9</div><div class="rs-lbl">Holdings found</div></div>
           <div class="review-stat"><div class="rs-val">SGD 284,310</div><div class="rs-lbl">Total value</div></div>
-          <div class="review-stat"><div class="rs-val" style="color:var(--amber);">1</div><div class="rs-lbl">Needs review</div></div>
+          <div class="review-stat"><div class="rs-val" style="color:var(--yellow);">1</div><div class="rs-lbl">Needs review</div></div>
           <div class="review-stat"><div class="rs-val" style="color:var(--green);">94%</div><div class="rs-lbl">Confidence</div></div>
         </div>
-
         <div class="review-table-wrap">
           <div class="review-table-header">
             <span class="rth-title">Unit trusts — FSM / iFAST · SGD</span>
             <span class="conf-badge conf-high">94% confidence</span>
           </div>
           <table class="review">
-            <thead>
-              <tr>
-                <th>Fund name</th><th>ISIN</th>
-                <th class="r">Units</th><th class="r">NAV</th>
-                <th class="r">Mkt value</th><th class="r">Cost basis</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Fund name</th><th>ISIN</th><th class="r">Units</th><th class="r">NAV</th><th class="r">Mkt value</th><th class="r">Cost basis</th></tr></thead>
             <tbody>
-              <tr>
-                <td>Nikko AM Shenton Income Fund</td>
-                <td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999003479</td>
-                <td class="r">42,381.22</td><td class="r">1.2340</td>
-                <td class="r">52,298</td><td class="r">48,100</td>
-              </tr>
-              <tr>
-                <td>Lion-OCBC Sec Sing Low Carbon ETF</td>
-                <td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999019797</td>
-                <td class="r">18,200.00</td><td class="r">0.9870</td>
-                <td class="r">17,963</td><td class="r">19,500</td>
-              </tr>
-              <tr>
-                <td>Schroder Asian Growth Fund</td>
-                <td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999002885</td>
-                <td class="r">9,450.00</td><td class="r">3.4120</td>
-                <td class="r">32,243</td><td class="r">28,800</td>
-              </tr>
-              <tr style="background:rgba(196,141,58,0.06);">
-                <td>
-                  <div>Eastspring Investments Bond Fund</div>
-                  <div style="font-size:10px;color:var(--amber);margin-top:2px;">⚠ NAV not found — enter manually</div>
-                </td>
+              <tr><td>Nikko AM Shenton Income Fund</td><td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999003479</td><td class="r">42,381.22</td><td class="r">1.2340</td><td class="r">52,298</td><td class="r">48,100</td></tr>
+              <tr><td>Lion-OCBC Sec Sing Low Carbon ETF</td><td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999019797</td><td class="r">18,200.00</td><td class="r">0.9870</td><td class="r">17,963</td><td class="r">19,500</td></tr>
+              <tr><td>Schroder Asian Growth Fund</td><td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999002885</td><td class="r">9,450.00</td><td class="r">3.4120</td><td class="r">32,243</td><td class="r">28,800</td></tr>
+              <tr class="flag-row">
+                <td><div>Eastspring Investments Bond Fund</div><div style="font-size:10px;color:var(--yellow);margin-top:2px;">⚠ NAV not found — enter manually</div></td>
                 <td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999012614</td>
                 <td class="r">31,000.00</td>
-                <td class="r warn"><input type="text" value="" placeholder="Enter NAV" style="background:none;border:none;border-bottom:0.5px solid var(--amber);color:var(--text);font-size:11px;font-family:var(--mono);text-align:right;padding:0;outline:none;width:70px;"></td>
+                <td class="r warn"><input type="text" value="" placeholder="Enter NAV" style="background:none;border:none;border-bottom:1px solid var(--yellow);color:var(--text);font-size:11px;font-family:var(--mono);text-align:right;padding:0;outline:none;width:70px;box-shadow:none;"></td>
                 <td class="r muted">—</td><td class="r">29,400</td>
               </tr>
-              <tr>
-                <td>Fullerton Short Term Interest Rate Fund</td>
-                <td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999005730</td>
-                <td class="r">85,000.00</td><td class="r">1.1020</td>
-                <td class="r">93,670</td><td class="r">85,000</td>
-              </tr>
+              <tr><td>Fullerton Short Term Interest Rate Fund</td><td class="muted" style="font-family:var(--mono);font-size:10px;">SG9999005730</td><td class="r">85,000.00</td><td class="r">1.1020</td><td class="r">93,670</td><td class="r">85,000</td></tr>
             </tbody>
           </table>
         </div>
-
         <div class="review-table-wrap">
-          <div class="review-table-header">
-            <span class="rth-title">Cash balance</span>
-            <span class="conf-badge conf-high">99% confidence</span>
-          </div>
-          <table class="review">
-            <thead><tr><th>Description</th><th class="r">Amount (SGD)</th></tr></thead>
-            <tbody>
-              <tr><td>Uninvested cash — SGD</td><td class="r">4,218</td></tr>
-            </tbody>
-          </table>
+          <div class="review-table-header"><span class="rth-title">Cash balance</span><span class="conf-badge conf-high">99% confidence</span></div>
+          <table class="review"><thead><tr><th>Description</th><th class="r">Amount (SGD)</th></tr></thead><tbody><tr><td>Uninvested cash — SGD</td><td class="r">4,218</td></tr></tbody></table>
         </div>
-
-        <div style="font-size:11px;color:var(--subtle);margin-bottom:20px;line-height:1.6;">
-          Review extracted data before saving. Flagged rows should be resolved. All fields are editable in place.
-        </div>
-
+        <div style="font-size:11px;color:var(--subtle);margin-bottom:20px;line-height:1.7;">Review extracted data before saving. Flagged rows should be resolved. All fields are editable in place.</div>
         <div class="action-row">
           <button class="btn" onclick="showScreen('screen-method')">Cancel</button>
-          <button class="btn btn-primary" onclick="showScreen('screen-success')">Confirm & save →</button>
+          <button class="btn btn-primary" onclick="showScreen('screen-success')">Confirm &amp; save →</button>
         </div>
       </div>
 
       <!-- SCREEN: Review Manual -->
       <div id="screen-review-manual" class="screen">
         <div id="manual-review-content"></div>
-        <div class="action-row">
-          <button class="btn" onclick="showScreen('screen-method'); selectMethod('manual')">Edit</button>
-          <button class="btn btn-primary" onclick="showScreen('screen-success')">Confirm & save →</button>
+        <div class="action-row" style="margin-top:4px;">
+          <button class="btn" onclick="showScreen('screen-method');selectMethod('manual')">Edit</button>
+          <button class="btn btn-primary" onclick="showScreen('screen-success')">Confirm &amp; save →</button>
         </div>
       </div>
 
       <!-- SCREEN: Success -->
       <div id="screen-success" class="screen">
-        <div class="form-section">
-          <div class="form-section-body">
-            <div class="success-view">
-              <div class="success-icon">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <div class="success-title">Holdings saved</div>
-              <div class="success-sub">Sarah Tan's portfolio has been updated successfully.</div>
-              <div class="success-actions">
-                <button class="btn" onclick="showScreen('screen-method'); selectMethod('pdf')">Add more holdings</button>
-                <button class="btn btn-primary" onclick="alert('In the full app, this would open the portfolio dashboard.')">View portfolio →</button>
-              </div>
+        <div class="form-section"><div class="form-section-body">
+          <div class="success-view">
+            <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="success-title">Holdings saved</div>
+            <div class="success-sub">Sarah Tan's portfolio has been updated successfully.</div>
+            <div class="success-actions">
+              <button class="btn" onclick="showScreen('screen-method');selectMethod('pdf')">Add more holdings</button>
+              <button class="btn btn-primary" onclick="alert('In the full app, this opens the portfolio dashboard.')">View portfolio →</button>
             </div>
           </div>
-        </div>
+        </div></div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
 
 <script>
-// ── Fund data ──
-const FUNDS = [
-  { name:'Nikko AM Shenton Income Fund', ticker:'SG9999003479', type:'ut', price:1.2340, ccy:'SGD', exchange:'FSM' },
-  { name:'Schroder Asian Growth Fund', ticker:'SG9999002885', type:'ut', price:3.4120, ccy:'SGD', exchange:'FSM' },
-  { name:'Lion-OCBC Sec Singapore Low Carbon ETF', ticker:'SG9999019797', type:'ut', price:0.9870, ccy:'SGD', exchange:'FSM' },
-  { name:'Eastspring Investments Bond Fund', ticker:'SG9999012614', type:'ut', price:1.0540, ccy:'SGD', exchange:'FSM' },
-  { name:'Fullerton Short Term Interest Rate Fund', ticker:'SG9999005730', type:'ut', price:1.1020, ccy:'SGD', exchange:'FSM' },
-  { name:'Lion Global Infinity US 500 Stock Index Fund', ticker:'SG9999005904', type:'ut', price:2.3810, ccy:'SGD', exchange:'FSM' },
-  { name:'Dimensional Global Core Equity Fund', ticker:'SG9999018210', type:'ut', price:1.6490, ccy:'SGD', exchange:'FSM' },
-  { name:'PIMCO GIS Income Fund SGD Hedged', ticker:'IE00B8LHG868', type:'ut', price:9.8200, ccy:'SGD', exchange:'FSM' },
-  { name:'Endowus Core Equity Portfolio', ticker:'ENDOWUS-CEP', type:'ut', price:null, ccy:'SGD', exchange:'Endowus' },
-  { name:'SPDR STI ETF', ticker:'ES3', type:'etf', price:3.3800, ccy:'SGD', exchange:'SGX' },
-  { name:'Nikko AM STI ETF', ticker:'G3B', type:'etf', price:3.3750, ccy:'SGD', exchange:'SGX' },
-  { name:'Lion-Phillip S-REIT ETF', ticker:'CLR', type:'etf', price:0.8940, ccy:'SGD', exchange:'SGX' },
-  { name:'NikkoAM-StraitsTrading Asia ex Japan REIT ETF', ticker:'CFA', type:'etf', price:0.7210, ccy:'SGD', exchange:'SGX' },
-  { name:'Mapletree Pan Asia Commercial Trust', ticker:'N2IU', type:'reit', price:1.2600, ccy:'SGD', exchange:'SGX' },
-  { name:'Mapletree Logistics Trust', ticker:'M44U', type:'reit', price:1.3800, ccy:'SGD', exchange:'SGX' },
-  { name:'Keppel REIT', ticker:'K71U', type:'reit', price:0.8200, ccy:'SGD', exchange:'SGX' },
-  { name:'CapitaLand Integrated Commercial Trust', ticker:'C38U', type:'reit', price:1.9200, ccy:'SGD', exchange:'SGX' },
-  { name:'Frasers Centrepoint Trust', ticker:'J69U', type:'reit', price:2.1000, ccy:'SGD', exchange:'SGX' },
-  { name:'Parkway Life REIT', ticker:'C2PU', type:'reit', price:3.8300, ccy:'SGD', exchange:'SGX' },
-  { name:'Ascendas REIT', ticker:'A17U', type:'reit', price:2.6400, ccy:'SGD', exchange:'SGX' },
-  { name:'DBS Group Holdings', ticker:'D05', type:'eq', price:38.50, ccy:'SGD', exchange:'SGX' },
-  { name:'OCBC Bank', ticker:'O39', type:'eq', price:15.80, ccy:'SGD', exchange:'SGX' },
-  { name:'United Overseas Bank', ticker:'U11', type:'eq', price:33.20, ccy:'SGD', exchange:'SGX' },
-  { name:'Singapore Telecommunications', ticker:'Z74', type:'eq', price:2.3600, ccy:'SGD', exchange:'SGX' },
-  { name:'Keppel Corporation', ticker:'BN4', type:'eq', price:6.7800, ccy:'SGD', exchange:'SGX' },
-  { name:'Singapore Airlines', ticker:'C6L', type:'eq', price:6.4200, ccy:'SGD', exchange:'SGX' },
-  { name:'CapitaLand Investment', ticker:'9CI', type:'eq', price:2.8800, ccy:'SGD', exchange:'SGX' },
-  { name:'Apple Inc', ticker:'AAPL', type:'us', price:172.50, ccy:'USD', exchange:'NASDAQ' },
-  { name:'Microsoft Corporation', ticker:'MSFT', type:'us', price:415.20, ccy:'USD', exchange:'NASDAQ' },
-  { name:'Alphabet Inc', ticker:'GOOGL', type:'us', price:168.30, ccy:'USD', exchange:'NASDAQ' },
-  { name:'Amazon.com Inc', ticker:'AMZN', type:'us', price:185.40, ccy:'USD', exchange:'NASDAQ' },
-  { name:'NVIDIA Corporation', ticker:'NVDA', type:'us', price:875.00, ccy:'USD', exchange:'NASDAQ' },
-  { name:'Meta Platforms', ticker:'META', type:'us', price:485.60, ccy:'USD', exchange:'NASDAQ' },
-  { name:'iShares MSCI World ETF', ticker:'SWDA', type:'us', price:98.40, ccy:'USD', exchange:'LSE' },
-  { name:'Vanguard S&P 500 ETF', ticker:'VOO', type:'us', price:484.20, ccy:'USD', exchange:'NYSE' },
+const FUNDS=[
+  {name:'Nikko AM Shenton Income Fund',ticker:'SG9999003479',type:'ut',price:1.2340,ccy:'SGD',exchange:'FSM'},
+  {name:'Schroder Asian Growth Fund',ticker:'SG9999002885',type:'ut',price:3.4120,ccy:'SGD',exchange:'FSM'},
+  {name:'Lion-OCBC Sec Singapore Low Carbon ETF',ticker:'SG9999019797',type:'ut',price:0.9870,ccy:'SGD',exchange:'FSM'},
+  {name:'Eastspring Investments Bond Fund',ticker:'SG9999012614',type:'ut',price:1.0540,ccy:'SGD',exchange:'FSM'},
+  {name:'Fullerton Short Term Interest Rate Fund',ticker:'SG9999005730',type:'ut',price:1.1020,ccy:'SGD',exchange:'FSM'},
+  {name:'Lion Global Infinity US 500 Stock Index Fund',ticker:'SG9999005904',type:'ut',price:2.3810,ccy:'SGD',exchange:'FSM'},
+  {name:'Dimensional Global Core Equity Fund',ticker:'SG9999018210',type:'ut',price:1.6490,ccy:'SGD',exchange:'FSM'},
+  {name:'PIMCO GIS Income Fund SGD Hedged',ticker:'IE00B8LHG868',type:'ut',price:9.8200,ccy:'SGD',exchange:'FSM'},
+  {name:'Endowus Core Equity Portfolio',ticker:'ENDOWUS-CEP',type:'ut',price:null,ccy:'SGD',exchange:'Endowus'},
+  {name:'SPDR STI ETF',ticker:'ES3',type:'etf',price:3.3800,ccy:'SGD',exchange:'SGX'},
+  {name:'Nikko AM STI ETF',ticker:'G3B',type:'etf',price:3.3750,ccy:'SGD',exchange:'SGX'},
+  {name:'Lion-Phillip S-REIT ETF',ticker:'CLR',type:'etf',price:0.8940,ccy:'SGD',exchange:'SGX'},
+  {name:'NikkoAM-StraitsTrading Asia ex Japan REIT ETF',ticker:'CFA',type:'etf',price:0.7210,ccy:'SGD',exchange:'SGX'},
+  {name:'Mapletree Pan Asia Commercial Trust',ticker:'N2IU',type:'reit',price:1.2600,ccy:'SGD',exchange:'SGX'},
+  {name:'Mapletree Logistics Trust',ticker:'M44U',type:'reit',price:1.3800,ccy:'SGD',exchange:'SGX'},
+  {name:'Keppel REIT',ticker:'K71U',type:'reit',price:0.8200,ccy:'SGD',exchange:'SGX'},
+  {name:'CapitaLand Integrated Commercial Trust',ticker:'C38U',type:'reit',price:1.9200,ccy:'SGD',exchange:'SGX'},
+  {name:'Frasers Centrepoint Trust',ticker:'J69U',type:'reit',price:2.1000,ccy:'SGD',exchange:'SGX'},
+  {name:'Parkway Life REIT',ticker:'C2PU',type:'reit',price:3.8300,ccy:'SGD',exchange:'SGX'},
+  {name:'Ascendas REIT',ticker:'A17U',type:'reit',price:2.6400,ccy:'SGD',exchange:'SGX'},
+  {name:'DBS Group Holdings',ticker:'D05',type:'eq',price:38.50,ccy:'SGD',exchange:'SGX'},
+  {name:'OCBC Bank',ticker:'O39',type:'eq',price:15.80,ccy:'SGD',exchange:'SGX'},
+  {name:'United Overseas Bank',ticker:'U11',type:'eq',price:33.20,ccy:'SGD',exchange:'SGX'},
+  {name:'Singapore Telecommunications',ticker:'Z74',type:'eq',price:2.3600,ccy:'SGD',exchange:'SGX'},
+  {name:'Keppel Corporation',ticker:'BN4',type:'eq',price:6.7800,ccy:'SGD',exchange:'SGX'},
+  {name:'Singapore Airlines',ticker:'C6L',type:'eq',price:6.4200,ccy:'SGD',exchange:'SGX'},
+  {name:'CapitaLand Investment',ticker:'9CI',type:'eq',price:2.8800,ccy:'SGD',exchange:'SGX'},
+  {name:'Apple Inc',ticker:'AAPL',type:'us',price:172.50,ccy:'USD',exchange:'NASDAQ'},
+  {name:'Microsoft Corporation',ticker:'MSFT',type:'us',price:415.20,ccy:'USD',exchange:'NASDAQ'},
+  {name:'Alphabet Inc',ticker:'GOOGL',type:'us',price:168.30,ccy:'USD',exchange:'NASDAQ'},
+  {name:'Amazon.com Inc',ticker:'AMZN',type:'us',price:185.40,ccy:'USD',exchange:'NASDAQ'},
+  {name:'NVIDIA Corporation',ticker:'NVDA',type:'us',price:875.00,ccy:'USD',exchange:'NASDAQ'},
+  {name:'Meta Platforms',ticker:'META',type:'us',price:485.60,ccy:'USD',exchange:'NASDAQ'},
+  {name:'iShares MSCI World ETF',ticker:'SWDA',type:'us',price:98.40,ccy:'USD',exchange:'LSE'},
+  {name:'Vanguard S&P 500 ETF',ticker:'VOO',type:'us',price:484.20,ccy:'USD',exchange:'NYSE'},
 ];
+const TYPE_LABELS={ut:'Unit Trust',etf:'ETF',reit:'S-REIT',eq:'SGX Equity',us:'Global Equity'};
+const TYPE_CLASS={ut:'t-ut',etf:'t-etf',reit:'t-reit',eq:'t-eq',us:'t-us'};
+let rowCount=0,apiOnline=false;
 
-const TYPE_LABELS = { ut:'Unit Trust', etf:'ETF', reit:'S-REIT', eq:'SGX Equity', us:'Global Equity' };
-const TYPE_CLASS  = { ut:'t-ut', etf:'t-etf', reit:'t-reit', eq:'t-eq', us:'t-us' };
-
-let rowCount = 0;
-let apiOnline = false;
-let currentMethod = 'pdf';
-
-// ── API check ──
-async function checkApi() {
-  const dot = document.getElementById('api-dot');
-  const txt = document.getElementById('api-txt');
-  try {
-    const r = await fetch('https://api.twelvedata.com/price?symbol=D05&exchange=SGX&apikey=demo', { signal: AbortSignal.timeout(3000) });
-    if (r.ok) { apiOnline = true; dot.classList.add('online'); txt.textContent = 'Live prices'; return; }
-  } catch(e) {}
-  dot.classList.remove('online'); txt.textContent = 'Fallback data';
+async function checkApi(){
+  const dot=document.getElementById('api-dot'),txt=document.getElementById('api-txt');
+  try{const r=await fetch('https://api.twelvedata.com/price?symbol=D05&exchange=SGX&apikey=demo',{signal:AbortSignal.timeout(3000)});
+    if(r.ok){apiOnline=true;dot.classList.add('online');txt.textContent='Live prices';return;}}catch(e){}
+  dot.classList.remove('online');txt.textContent='Fallback data';
 }
-
-// ── Screen control ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function selectMethod(m){
+  document.getElementById('card-pdf').classList.toggle('active',m==='pdf');
+  document.getElementById('card-manual').classList.toggle('active',m==='manual');
+  document.getElementById('pdf-flow').style.display=m==='pdf'?'block':'none';
+  document.getElementById('manual-flow').style.display=m==='manual'?'block':'none';
 }
-
-// ── Method toggle ──
-function selectMethod(method) {
-  currentMethod = method;
-  document.getElementById('card-pdf').classList.toggle('active', method === 'pdf');
-  document.getElementById('card-manual').classList.toggle('active', method === 'manual');
-  document.getElementById('pdf-flow').style.display    = method === 'pdf'    ? 'block' : 'none';
-  document.getElementById('manual-flow').style.display = method === 'manual' ? 'block' : 'none';
+function triggerUpload(){document.getElementById('file-input').click();}
+function handleFileSelect(e){const f=e.target.files[0];if(f)showFileQueued(f.name,f.size);}
+function handleDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')showFileQueued(f.name,f.size);}
+function showFileQueued(name,size){
+  const kb=Math.round(size/1024),s=kb>1024?(kb/1024).toFixed(1)+' MB':kb+' KB';
+  document.getElementById('upload-zone-wrap').innerHTML=`<div class="file-queued"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="file-name">${name}</span><span class="file-size">${s}</span><span class="file-remove" onclick="resetUpload()">Remove</span></div>`;
+  document.getElementById('extract-btn').disabled=false;
 }
-
-// ── File upload ──
-function triggerUpload() { document.getElementById('file-input').click(); }
-
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (file) showFileQueued(file.name, file.size);
+function resetUpload(){
+  document.getElementById('upload-zone-wrap').innerHTML=`<div class="upload-zone" id="drop-zone" onclick="triggerUpload()" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)"><div class="upload-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div><div class="upload-title">Drop statement here</div><div class="upload-sub">PDF up to 20 MB &nbsp;·&nbsp; <span onclick="event.stopPropagation();triggerUpload()">browse files</span></div></div>`;
+  document.getElementById('extract-btn').disabled=true;document.getElementById('file-input').value='';
 }
-
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('drop-zone').classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file && file.type === 'application/pdf') showFileQueued(file.name, file.size);
-}
-
-function showFileQueued(name, size) {
-  const wrap = document.getElementById('upload-zone-wrap');
-  const kb = Math.round(size / 1024);
-  const sizeStr = kb > 1024 ? (kb/1024).toFixed(1) + ' MB' : kb + ' KB';
-  wrap.innerHTML = `
-    <div class="file-queued">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span class="file-name">${name}</span>
-      <span class="file-size">${sizeStr}</span>
-      <span class="file-remove" onclick="resetUpload()">Remove</span>
-    </div>`;
-  document.getElementById('extract-btn').disabled = false;
-}
-
-function resetUpload() {
-  document.getElementById('upload-zone-wrap').innerHTML = `
-    <div class="upload-zone" id="drop-zone"
-      onclick="triggerUpload()"
-      ondragover="event.preventDefault(); this.classList.add('drag-over')"
-      ondragleave="this.classList.remove('drag-over')"
-      ondrop="handleDrop(event)">
-      <div class="upload-icon">
-        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-      </div>
-      <div class="upload-title">Drop statement here</div>
-      <div class="upload-sub">PDF up to 20 MB &nbsp;·&nbsp; <span onclick="event.stopPropagation(); triggerUpload()">browse files</span></div>
-    </div>`;
-  document.getElementById('extract-btn').disabled = true;
-  document.getElementById('file-input').value = '';
-}
-
-// ── Processing simulation ──
-function startProcessing() {
+function startProcessing(){
   showScreen('screen-processing');
-  const steps = [
-    'Reading PDF structure...',
-    'Identifying institution format...',
-    'Extracting fund holdings...',
-    'Matching NAVs and prices...',
-    'Calculating market values...',
-    'Running confidence checks...',
-  ];
-  let i = 0;
-  const lbl = document.getElementById('proc-label');
-  const timer = setInterval(() => {
-    i++;
-    if (i < steps.length) { lbl.textContent = steps[i]; }
-    else { clearInterval(timer); showScreen('screen-review-pdf'); }
-  }, 650);
+  const steps=['Reading PDF structure...','Identifying institution format...','Extracting fund holdings...','Matching NAVs and prices...','Calculating market values...','Running confidence checks...'];
+  let i=0;const lbl=document.getElementById('proc-label');
+  const t=setInterval(()=>{i++;if(i<steps.length)lbl.textContent=steps[i];else{clearInterval(t);showScreen('screen-review-pdf');}},650);
 }
-
-// ── Row management ──
-function addRow(prefill) {
-  rowCount++;
-  const id = rowCount;
-  const container = document.getElementById('holding-rows');
-  const wrap = document.createElement('div');
-  wrap.className = 'holding-wrap';
-  wrap.id = `rw-${id}`;
-  wrap.innerHTML = `
-    <div class="holding-row">
-      <div class="search-wrap">
-        <input type="text" id="s-${id}" class="search-input-inner"
-          placeholder="Search fund, REIT, ticker..." autocomplete="off"
-          oninput="onSearch(${id})" onblur="delayHide(${id})" onfocus="onSearch(${id})">
-        <div class="search-dropdown hidden" id="dd-${id}"></div>
-      </div>
-      <input type="text" class="num-input" id="u-${id}" placeholder="0.00" oninput="recalcRow(${id})">
-      <div class="price-wrap">
-        <input type="text" class="num-input" id="p-${id}" placeholder="0.0000" oninput="recalcRow(${id})">
-        <span class="live-badge" id="lb-${id}">LIVE</span>
-        <span class="loading-badge" id="ldg-${id}">···</span>
-      </div>
-      <input type="text" class="num-input" id="c-${id}" placeholder="0.00" oninput="recalcTotals()">
-      <button class="remove-btn" onclick="removeRow(${id})">×</button>
-    </div>
-    <div class="row-meta" id="rm-${id}"></div>
-  `;
-  container.appendChild(wrap);
-  if (prefill) applyFund(id, prefill);
-  recalcTotals();
+function addRow(prefill){
+  rowCount++;const id=rowCount;const container=document.getElementById('holding-rows');
+  const wrap=document.createElement('div');wrap.className='holding-wrap';wrap.id=`rw-${id}`;
+  wrap.innerHTML=`<div class="holding-row"><div class="search-wrap"><input type="text" id="s-${id}" class="search-input-inner" placeholder="Search fund, REIT, ticker..." autocomplete="off" oninput="onSearch(${id})" onblur="delayHide(${id})" onfocus="onSearch(${id})"><div class="search-dropdown hidden" id="dd-${id}"></div></div><input type="text" class="num-input" id="u-${id}" placeholder="0.00" oninput="recalcRow(${id})"><div class="price-wrap"><input type="text" class="num-input" id="p-${id}" placeholder="0.0000" oninput="recalcRow(${id})"><span class="live-badge" id="lb-${id}">LIVE</span><span class="loading-badge" id="ldg-${id}">···</span></div><input type="text" class="num-input" id="c-${id}" placeholder="0.00" oninput="recalcTotals()"><button class="remove-btn" onclick="removeRow(${id})">×</button></div><div class="row-meta" id="rm-${id}"></div>`;
+  container.appendChild(wrap);if(prefill)applyFund(id,prefill);recalcTotals();
 }
-
-function removeRow(id) {
-  document.getElementById(`rw-${id}`)?.remove();
-  recalcTotals();
+function removeRow(id){document.getElementById(`rw-${id}`)?.remove();recalcTotals();}
+function onSearch(id){
+  const q=(document.getElementById(`s-${id}`)?.value||'').toLowerCase().trim();
+  const dd=document.getElementById(`dd-${id}`);
+  if(!q||q.length<1){dd.classList.add('hidden');return;}
+  const results=FUNDS.filter(f=>f.name.toLowerCase().includes(q)||f.ticker.toLowerCase().includes(q)).slice(0,10);
+  if(!results.length){dd.innerHTML=`<div class="dd-empty">No results for "${q}"</div>`;dd.classList.remove('hidden');return;}
+  const live=results.filter(f=>['eq','reit','etf','us'].includes(f.type));
+  const ut=results.filter(f=>f.type==='ut');
+  let html='';
+  if(live.length){html+=`<div class="dd-section">Equities, REITs &amp; ETFs</div>`;live.forEach(f=>{html+=ddItem(id,f);});}
+  if(ut.length){html+=`<div class="dd-section">Unit trusts &amp; funds</div>`;ut.forEach(f=>{html+=ddItem(id,f);});}
+  dd.innerHTML=html;dd.classList.remove('hidden');
 }
-
-// ── Search ──
-function onSearch(id) {
-  const q = (document.getElementById(`s-${id}`)?.value || '').toLowerCase().trim();
-  const dd = document.getElementById(`dd-${id}`);
-  if (!q || q.length < 1) { dd.classList.add('hidden'); return; }
-  const results = FUNDS.filter(f => f.name.toLowerCase().includes(q) || f.ticker.toLowerCase().includes(q)).slice(0, 10);
-  if (!results.length) {
-    dd.innerHTML = `<div class="dd-empty">No results for "${q}"</div>`;
-    dd.classList.remove('hidden'); return;
-  }
-  const live = results.filter(f => ['eq','reit','etf','us'].includes(f.type));
-  const ut   = results.filter(f => f.type === 'ut');
-  let html = '';
-  if (live.length) { html += `<div class="dd-section">Equities, REITs & ETFs</div>`; live.forEach(f => { html += ddItem(id, f); }); }
-  if (ut.length)   { html += `<div class="dd-section">Unit trusts & funds</div>`;    ut.forEach(f => { html += ddItem(id, f); }); }
-  dd.innerHTML = html;
-  dd.classList.remove('hidden');
+function ddItem(id,f){
+  const price=f.price?`${f.ccy} ${f.price.toFixed(4)}`:'NAV TBC';
+  const data=encodeURIComponent(JSON.stringify(f));
+  return `<div class="dd-item" onmousedown="applyFund(${id},decodeAndParse('${data}'))"><div class="dd-left"><div class="dd-name">${f.name}</div><div class="dd-sub">${f.ticker} · ${f.exchange}</div></div><div class="dd-right"><div class="dd-price">${price}</div><span class="dd-type ${TYPE_CLASS[f.type]}">${TYPE_LABELS[f.type]}</span></div></div>`;
 }
-
-function ddItem(id, f) {
-  const price = f.price ? `${f.ccy} ${f.price.toFixed(4)}` : 'NAV TBC';
-  const data = encodeURIComponent(JSON.stringify(f));
-  return `<div class="dd-item" onmousedown="applyFund(${id}, decodeAndParse('${data}'))">
-    <div class="dd-left">
-      <div class="dd-name">${f.name}</div>
-      <div class="dd-sub">${f.ticker} · ${f.exchange}</div>
-    </div>
-    <div class="dd-right">
-      <div class="dd-price">${price}</div>
-      <span class="dd-type ${TYPE_CLASS[f.type]}">${TYPE_LABELS[f.type]}</span>
-    </div>
-  </div>`;
-}
-
-function decodeAndParse(s) { return JSON.parse(decodeURIComponent(s)); }
-
-function delayHide(id) {
-  setTimeout(() => { document.getElementById(`dd-${id}`)?.classList.add('hidden'); }, 180);
-}
-
-async function applyFund(id, fund) {
-  const si = document.getElementById(`s-${id}`);
-  const pi = document.getElementById(`p-${id}`);
-  const lb = document.getElementById(`lb-${id}`);
-  const ldg = document.getElementById(`ldg-${id}`);
-  const rm = document.getElementById(`rm-${id}`);
-  if (!si) return;
-  si.value = fund.name;
-  si.dataset.fund = JSON.stringify(fund);
+function decodeAndParse(s){return JSON.parse(decodeURIComponent(s));}
+function delayHide(id){setTimeout(()=>{document.getElementById(`dd-${id}`)?.classList.add('hidden');},180);}
+async function applyFund(id,fund){
+  const si=document.getElementById(`s-${id}`),pi=document.getElementById(`p-${id}`),lb=document.getElementById(`lb-${id}`),ldg=document.getElementById(`ldg-${id}`),rm=document.getElementById(`rm-${id}`);
+  if(!si)return;si.value=fund.name;si.dataset.fund=JSON.stringify(fund);
   document.getElementById(`dd-${id}`)?.classList.add('hidden');
-  rm.innerHTML = `<span class="row-meta-txt">${TYPE_LABELS[fund.type]} · ${fund.exchange} · ${fund.ccy}</span>`;
-
+  rm.innerHTML=`<span class="row-meta-txt">${TYPE_LABELS[fund.type]} · ${fund.exchange} · ${fund.ccy}</span>`;
   lb.classList.remove('show');
-  if (fund.price) {
-    pi.value = fund.price.toFixed(4);
-    ldg.classList.add('show');
-    recalcRow(id);
-    const live = await fetchLive(fund.ticker, fund.exchange);
-    ldg.classList.remove('show');
-    if (live) { pi.value = live.toFixed(4); lb.classList.add('show'); }
-    recalcRow(id);
-  } else {
-    pi.value = '';
-    pi.placeholder = 'Enter NAV';
-    rm.innerHTML += ` <span class="row-meta-txt" style="color:var(--amber);">· NAV not auto-available</span>`;
-  }
+  if(fund.price){pi.value=fund.price.toFixed(4);ldg.classList.add('show');recalcRow(id);
+    const live=await fetchLive(fund.ticker,fund.exchange);ldg.classList.remove('show');
+    if(live){pi.value=live.toFixed(4);lb.classList.add('show');}recalcRow(id);
+  }else{pi.value='';pi.placeholder='Enter NAV';rm.innerHTML+=` <span class="row-meta-txt" style="color:var(--yellow);">· NAV not auto-available</span>`;}
 }
-
-async function fetchLive(ticker, exchange) {
-  if (!apiOnline) return null;
-  try {
-    const exMap = { SGX:'SGX', NASDAQ:'NASDAQ', NYSE:'NYSE', LSE:'LSE' };
-    const ex = exMap[exchange];
-    if (!ex) return null;
-    const r = await fetch(`https://api.twelvedata.com/price?symbol=${ticker}&exchange=${ex}&apikey=demo`, { signal: AbortSignal.timeout(3000) });
-    const d = await r.json();
-    return d.price ? parseFloat(d.price) : null;
-  } catch(e) { return null; }
+async function fetchLive(ticker,exchange){
+  if(!apiOnline)return null;
+  try{const exMap={SGX:'SGX',NASDAQ:'NASDAQ',NYSE:'NYSE',LSE:'LSE'};const ex=exMap[exchange];if(!ex)return null;
+    const r=await fetch(`https://api.twelvedata.com/price?symbol=${ticker}&exchange=${ex}&apikey=demo`,{signal:AbortSignal.timeout(3000)});
+    const d=await r.json();return d.price?parseFloat(d.price):null;}catch(e){return null;}
 }
-
-// ── Recalc ──
-function recalcRow(id) {
-  const u = parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,'')) || 0;
-  const p = parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,'')) || 0;
-  const c = parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,'')) || 0;
-  const val = u * p;
-  const rm = document.getElementById(`rm-${id}`);
-  if (!rm) { recalcTotals(); return; }
-  const fundRaw = document.getElementById(`s-${id}`)?.dataset?.fund;
-  if (fundRaw && val > 0) {
-    const fund = JSON.parse(fundRaw);
-    let h = `<span class="row-meta-txt">${TYPE_LABELS[fund.type]} · ${fund.exchange} · ${fund.ccy}</span>`;
-    h += `<span class="row-meta-txt" style="margin-left:8px;">Value: ${fmt(val, fund.ccy)}</span>`;
-    if (c > 0) {
-      const g = val - c; const pct = ((g/c)*100).toFixed(1);
-      const sign = g >= 0 ? '+' : '';
-      h += `<span class="row-gain ${g>=0?'gain-pos':'gain-neg'}" style="margin-left:8px;">${sign}${fmtNum(g)} (${sign}${pct}%)</span>`;
-    }
-    rm.innerHTML = h;
-  }
+function recalcRow(id){
+  const u=parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,''))||0;
+  const p=parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,''))||0;
+  const c=parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,''))||0;
+  const val=u*p,rm=document.getElementById(`rm-${id}`);
+  if(!rm){recalcTotals();return;}
+  const fundRaw=document.getElementById(`s-${id}`)?.dataset?.fund;
+  if(fundRaw&&val>0){const fund=JSON.parse(fundRaw);
+    let h=`<span class="row-meta-txt">${TYPE_LABELS[fund.type]} · ${fund.exchange} · ${fund.ccy}</span>`;
+    h+=`<span class="row-meta-txt" style="margin-left:8px;">Value: ${fmt(val,fund.ccy)}</span>`;
+    if(c>0){const g=val-c,pct=((g/c)*100).toFixed(1),sign=g>=0?'+':'';
+      h+=`<span class="row-gain ${g>=0?'gain-pos':'gain-neg'}" style="margin-left:8px;">${sign}${fmtNum(g)} (${sign}${pct}%)</span>`;}
+    rm.innerHTML=h;}
   recalcTotals();
 }
-
-function recalcTotals() {
-  let tv = 0, tc = 0, count = 0;
-  document.querySelectorAll('.holding-wrap').forEach(w => {
-    const id = w.id.replace('rw-', '');
-    const u = parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,'')) || 0;
-    const p = parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,'')) || 0;
-    const c = parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,'')) || 0;
-    if (u > 0 || p > 0) count++;
-    tv += u * p;
-    tc += c;
+function recalcTotals(){
+  let tv=0,tc=0,count=0;
+  document.querySelectorAll('.holding-wrap').forEach(w=>{
+    const id=w.id.replace('rw-','');
+    const u=parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,''))||0;
+    const p=parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,''))||0;
+    const c=parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,''))||0;
+    if(u>0||p>0)count++;tv+=u*p;tc+=c;
   });
-  const ccy = document.getElementById('base-ccy')?.value || 'SGD';
-  document.getElementById('t-val').textContent = fmt(tv, ccy);
-  document.getElementById('t-cost').textContent = fmt(tc, ccy);
-  document.getElementById('t-count').textContent = count;
-  const ge = document.getElementById('t-gain');
-  if (tc > 0 && tv > 0) {
-    const g = tv - tc; const pct = ((g/tc)*100).toFixed(1); const sign = g>=0?'+':'';
-    ge.textContent = `${sign}${fmtNum(g)} (${sign}${pct}%)`;
-    ge.style.color = g >= 0 ? 'var(--green)' : 'var(--red)';
-  } else { ge.textContent = '—'; ge.style.color = 'var(--subtle)'; }
+  const ccy=document.getElementById('base-ccy')?.value||'SGD';
+  document.getElementById('t-val').textContent=fmt(tv,ccy);
+  document.getElementById('t-cost').textContent=fmt(tc,ccy);
+  document.getElementById('t-count').textContent=count;
+  const ge=document.getElementById('t-gain');
+  if(tc>0&&tv>0){const g=tv-tc,pct=((g/tc)*100).toFixed(1),sign=g>=0?'+':'';
+    ge.textContent=`${sign}${fmtNum(g)} (${sign}${pct}%)`;ge.style.color=g>=0?'var(--green)':'var(--red)';}
+  else{ge.textContent='—';ge.style.color='var(--subtle)';}
 }
-
-function fmt(v, ccy) { return `${ccy} ${v.toLocaleString('en-SG', {minimumFractionDigits:2, maximumFractionDigits:2})}`; }
-function fmtNum(v) { return v.toLocaleString('en-SG', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-
-// ── Manual review ──
-function showReviewManual() {
-  const rows = [];
-  document.querySelectorAll('.holding-wrap').forEach(w => {
-    const id = w.id.replace('rw-', '');
-    const name = document.getElementById(`s-${id}`)?.value || '—';
-    const u = parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,'')) || 0;
-    const p = parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,'')) || 0;
-    const c = parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,'')) || 0;
-    if (name && name !== '—' && (u > 0 || p > 0)) rows.push({ name, u, p, c });
+function fmt(v,ccy){return `${ccy} ${v.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2})}`;}
+function fmtNum(v){return v.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function showReviewManual(){
+  const rows=[];
+  document.querySelectorAll('.holding-wrap').forEach(w=>{
+    const id=w.id.replace('rw-','');
+    const name=document.getElementById(`s-${id}`)?.value||'—';
+    const u=parseFloat(document.getElementById(`u-${id}`)?.value?.replace(/,/g,''))||0;
+    const p=parseFloat(document.getElementById(`p-${id}`)?.value?.replace(/,/g,''))||0;
+    const c=parseFloat(document.getElementById(`c-${id}`)?.value?.replace(/,/g,''))||0;
+    if(name&&name!=='—'&&(u>0||p>0))rows.push({name,u,p,c});
   });
-
-  const ccy = document.getElementById('base-ccy')?.value || 'SGD';
-  const inst = document.getElementById('inst-sel')?.value || 'Unknown';
-  const tv = rows.reduce((a, r) => a + r.u * r.p, 0);
-  const tc = rows.reduce((a, r) => a + r.c, 0);
-
-  let html = `
-    <div class="review-banner">
-      <div class="review-stat"><div class="rs-val">${rows.length}</div><div class="rs-lbl">Holdings</div></div>
-      <div class="review-stat"><div class="rs-val">${fmt(tv, ccy)}</div><div class="rs-lbl">Market value</div></div>
-      <div class="review-stat"><div class="rs-val">${fmt(tc, ccy)}</div><div class="rs-lbl">Cost basis</div></div>
-    </div>
-    <div class="review-table-wrap" style="margin-bottom:20px;">
-      <div class="review-table-header">
-        <span class="rth-title">Manual entry — ${inst} · ${ccy}</span>
-        <span class="conf-badge conf-manual">Manual — verify</span>
-      </div>
-      <table class="review">
-        <thead><tr><th>Name</th><th class="r">Units</th><th class="r">Price</th><th class="r">Value</th><th class="r">Cost basis</th><th class="r">P&L</th></tr></thead>
-        <tbody>`;
-
-  rows.forEach(r => {
-    const val = r.u * r.p;
-    const g = r.c > 0 ? val - r.c : null;
-    const pct = r.c > 0 ? ((g/r.c)*100).toFixed(1) : null;
-    const gainCell = g !== null ? `<span class="${g>=0?'gain-pos':'gain-neg'}">${g>=0?'+':''}${fmtNum(g)}<br><span style="font-size:9px;">(${g>=0?'+':''}${pct}%)</span></span>` : `<span class="muted">—</span>`;
-    html += `<tr>
-      <td>${r.name}</td>
-      <td class="r">${r.u.toLocaleString()}</td>
-      <td class="r">${r.p.toFixed(4)}</td>
-      <td class="r">${fmtNum(val)}</td>
-      <td class="r">${r.c > 0 ? fmtNum(r.c) : '<span class="muted">—</span>'}</td>
-      <td class="r">${gainCell}</td>
-    </tr>`;
-  });
-
-  if (!rows.length) { html += `<tr><td colspan="6" style="text-align:center;color:var(--subtle);padding:20px;">No holdings entered</td></tr>`; }
-
-  html += `</tbody></table></div>`;
-  document.getElementById('manual-review-content').innerHTML = html;
-  showScreen('screen-review-manual');
+  const ccy=document.getElementById('base-ccy')?.value||'SGD';
+  const inst=document.getElementById('inst-sel')?.value||'Unknown';
+  const tv=rows.reduce((a,r)=>a+r.u*r.p,0),tc=rows.reduce((a,r)=>a+r.c,0);
+  let html=`<div class="review-banner"><div class="review-stat"><div class="rs-val">${rows.length}</div><div class="rs-lbl">Holdings</div></div><div class="review-stat"><div class="rs-val">${fmt(tv,ccy)}</div><div class="rs-lbl">Market value</div></div><div class="review-stat"><div class="rs-val">${fmt(tc,ccy)}</div><div class="rs-lbl">Cost basis</div></div></div><div class="review-table-wrap" style="margin-bottom:20px;"><div class="review-table-header"><span class="rth-title">Manual entry — ${inst} · ${ccy}</span><span class="conf-badge conf-manual">Manual — verify</span></div><table class="review"><thead><tr><th>Name</th><th class="r">Units</th><th class="r">Price</th><th class="r">Value</th><th class="r">Cost basis</th><th class="r">P&amp;L</th></tr></thead><tbody>`;
+  rows.forEach(r=>{const val=r.u*r.p,g=r.c>0?val-r.c:null,pct=r.c>0?((g/r.c)*100).toFixed(1):null;
+    const gc=g!==null?`<span class="${g>=0?'gain-pos':'gain-neg'}">${g>=0?'+':''}${fmtNum(g)}<br><span style="font-size:9px;">(${g>=0?'+':''}${pct}%)</span></span>`:`<span class="muted">—</span>`;
+    html+=`<tr><td>${r.name}</td><td class="r">${r.u.toLocaleString()}</td><td class="r">${r.p.toFixed(4)}</td><td class="r">${fmtNum(val)}</td><td class="r">${r.c>0?fmtNum(r.c):'<span class="muted">—</span>'}</td><td class="r">${gc}</td></tr>`;});
+  if(!rows.length)html+=`<tr><td colspan="6" style="text-align:center;color:var(--subtle);padding:20px;">No holdings entered</td></tr>`;
+  html+=`</tbody></table></div>`;
+  document.getElementById('manual-review-content').innerHTML=html;showScreen('screen-review-manual');
 }
-
-// ── Init ──
-checkApi();
-selectMethod('pdf');
-addRow();
-addRow();
+checkApi();selectMethod('pdf');addRow();addRow();
 </script>
 </body>
 </html>
